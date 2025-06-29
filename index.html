@@ -37,7 +37,7 @@
     button {
       padding: 12px 24px;
       font-size: 1em;
-      background-color: #e53935;
+      background-color: #e53935; /* rouge */
       color: white;
       border: none;
       border-radius: 8px;
@@ -45,7 +45,7 @@
       margin: 10px;
     }
     button:hover {
-      background-color: #b71c1c;
+      background-color: #b71c1c; /* rouge foncé */
     }
 
     /* Styles cœur */
@@ -72,7 +72,7 @@
       }
     }
 
-    /* Audio invisible */
+    /* Conteneur audio invisible */
     audio {
       display: none;
     }
@@ -88,25 +88,39 @@
     <button id="playMusicBtn" style="display:none;">▶️ C'est pour toi, Machin</button>
   </div>
 
+  <!-- Musique en fond -->
   <audio id="backgroundMusic" loop>
     <source src="musique.mp3" type="audio/mpeg" />
     Ton navigateur ne supporte pas la lecture audio.
   </audio>
 
-  <script>
-    let signatures = 0;
+  <!-- Son yay local -->
+  <audio id="yaySound">
+    <source src="yay.mp3" type="audio/mpeg" />
+    Ton navigateur ne supporte pas la lecture audio.
+  </audio>
 
-    function getSignatures() {
-      document.getElementById("counter").textContent = signatures + " signatures";
+  <script>
+    let counter = 0;
+
+    const music = document.getElementById('backgroundMusic');
+    const playBtn = document.getElementById('playMusicBtn');
+    const counterEl = document.getElementById('counter');
+    const yay = document.getElementById('yaySound');
+
+    function updateCounter() {
+      counterEl.textContent = counter + (counter <= 1 ? " signature" : " signatures");
     }
 
     function signPetition() {
-      signatures++;
-      getSignatures();
-      alert("Merci pour ta signature !");
+      counter++;
+      updateCounter();
+      yay.currentTime = 0;
+      yay.play();
+      createHeart();
     }
 
-    // Coeurs qui flottent
+    // Petits cœurs qui flottent doucement
     function createHeart() {
       const heart = document.createElement('div');
       heart.className = 'heart';
@@ -117,12 +131,10 @@
     }
     setInterval(createHeart, 700);
 
-    // Gestion de la musique
-    const music = document.getElementById('backgroundMusic');
-    const playBtn = document.getElementById('playMusicBtn');
-
+    // Essayer de lancer la musique automatiquement
     function tryPlayMusic() {
       music.play().catch(() => {
+        // Si auto-play bloqué, afficher le bouton play
         playBtn.style.display = 'inline-block';
       });
     }
@@ -132,7 +144,7 @@
       playBtn.style.display = 'none';
     };
 
-    getSignatures();
+    updateCounter();
     tryPlayMusic();
   </script>
 </body>
