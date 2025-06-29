@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pétition pour sauver Machin</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('fond.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      padding-top: 100px;
+      overflow-x: hidden;
+    }
+    .container {
+      background-color: rgba(0,0,0,0.6);
+      padding: 40px;
+      margin: auto;
+      border-radius: 12px;
+      max-width: 500px;
+      position: relative;
+      z-index: 10;
+    }
+    h1 {
+      font-size: 2em;
+    }
+    p {
+      font-size: 1.1em;
+    }
+    #counter {
+      font-size: 3em;
+      margin: 20px 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1em;
+      background-color: #e53935; /* rouge */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    button:hover {
+      background-color: #b71c1c; /* rouge foncé */
+    }
+
+    /* Styles cœur */
+    .heart {
+      position: fixed;
+      width: 25px;
+      height: 25px;
+      background-image: url('heart.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: floatUp 4s linear forwards;
+      z-index: 9999;
+    }
+    @keyframes floatUp {
+      from {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      to {
+        transform: translateY(-150px);
+        opacity: 0;
+      }
+    }
+
+    /* Conteneur audio invisible */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✊ Sauvons Machin le cochon d'Inde qui avant s'appelait Tchoupi!</h1>
+    <p>Chaque signature est une voix pour la dignité de Machin. Aidez-nous à lui offrir un avenir doux et plein de foin.</p>
+    <div id="counter">Chargement...</div>
+    <button onclick="signPetition()">Je signe ✍️</button>
+    <br />
+    <button id="playMusicBtn" style="display:none;">▶️ C'est pour toi, Machin</button>
+  </div>
+
+  <!-- Musique en fond -->
+  <audio id="backgroundMusic" loop>
+    <source src="musique.mp3" type="audio/mpeg" />
+    Ton navigateur ne supporte pas la lecture audio.
+  </audio>
+
+  <script>
+    const BIN_ID = '686189f28960c979a5b3eff2';
+    const API_KEY = '$2a$10$RyzvHSot1y.8zNFh20jhQebh1vG9AtXqgWbONUxq103vJPZn57K0a';
+    const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+
+    const music = document.getElementById('backgroundMusic');
+    const playBtn = document.getElementById('playMusicBtn');
+
+    async function getSignatures() {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'X-Master-Key': API_KEY }
+        });
+        const data = await res.json();
+        document.getElementById("counter").textContent = data.record.signatures + " signatures";
+      } catch (e) {
+        console.error("Erreur chargement : ", e);
+        document.getElementById("counter").textContent = "Erreur de chargement";
+      }
+    }
+
+    async function signPetition() {
+      try {
+        const res = await fetch(API_URL, {
+          headers: { 'X-Master-Key': API_KEY }
+        });
+        const data = await res.json();
+        const currentCount = data.record.signatures;
+
+        await fetch(API_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Master-Key": API_KEY,
+            "X-Bin-Versioning": "false"
+          },
+          body: JSON.stringify({ signatures: currentCount + 1 })
+        });
+
+        getSignatures();
+      } catch (e) {
+        alert("Impossible de signer, réessaye plus tard 😥");
+        console.error(e);
+      }
+    }
+
+    // Petits cœurs qui flottent doucement
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.top = window.innerHeight + 'px';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+    setInterval(createHeart, 700);
+
+    // Essayer de lancer la musique automatiquement
+    function tryPlayMusic() {
+      music.play().catch(() => {
+        // Si auto-play bloqué, afficher le bouton play
+        playBtn.style.display = 'inline-block';
+      });
+    }
+
+    playBtn.onclick = () => {
+      music.play();
+      playBtn.style.display = 'none';
+    };
+
+    getSignatures();
+    tryPlayMusic();
+  </script>
+</body>
+</html>
