@@ -48,6 +48,35 @@
     button:hover {
       background-color: #b71c1c; /* rouge foncé */
     }
+
+    /* Styles cœur */
+    .heart {
+      position: fixed;
+      width: 25px;
+      height: 25px;
+      background-image: url('heart.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: floatUp 4s linear forwards;
+      z-index: 9999;
+    }
+    @keyframes floatUp {
+      from {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      to {
+        transform: translateY(-150px);
+        opacity: 0;
+      }
+    }
+
+    /* Conteneur audio invisible */
+    audio {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -55,46 +84,57 @@
     <h1>✊ Sauvons Machin le cochon d'Inde qui avant s'appelait Tchoupi!</h1>
     <p>Chaque signature est une voix pour la dignité de Machin. Aidez-nous à lui offrir un avenir doux et plein de foin.</p>
     <div id="counter">0 signatures</div>
-    <button id="signBtn">Je signe ✍️</button>
+    <button onclick="signPetition()">Je signe ✍️</button>
+    <br />
+    <button id="playMusicBtn" style="display:none;">▶️ C'est pour toi, Machin</button>
   </div>
 
-  <!-- Firebase SDKs (modulaire) -->
-  <script type="module">
-    // Import depuis CDN Firebase
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-app.js";
-    import { getDatabase, ref, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.3.0/firebase-database.js";
+  <!-- Musique en fond -->
+  <audio id="backgroundMusic" loop>
+    <source src="musique.mp3" type="audio/mpeg" />
+    Ton navigateur ne supporte pas la lecture audio.
+  </audio>
 
-    // Config Firebase de ton projet
-    const firebaseConfig = {
-      apiKey: "AIzaSyCKV-PqZS_QQjRFnSNf0XTayitPS9gFnz4",
-      authDomain: "petition2machin.firebaseapp.com",
-      databaseURL: "https://petition2machin-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "petition2machin",
-      storageBucket: "petition2machin.firebasestorage.app",
-      messagingSenderId: "46610132883",
-      appId: "1:46610132883:web:46b8a2b95901521f5f4266",
-      measurementId: "G-BTGCWJK6VT"
+  <!-- Son yay -->
+  <audio id="yaySound" src="yay.mp3"></audio>
+
+  <script>
+    const music = document.getElementById('backgroundMusic');
+    const playBtn = document.getElementById('playMusicBtn');
+    const yaySound = document.getElementById('yaySound');
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.top = window.innerHeight + 'px';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+    setInterval(createHeart, 700);
+
+    function signPetition() {
+      let counterElem = document.getElementById("counter");
+      let currentCount = parseInt(counterElem.textContent) || 0;
+      currentCount++;
+      counterElem.textContent = currentCount + " signatures";
+
+      yaySound.currentTime = 0; // reset son
+      yaySound.play();
+    }
+
+    function tryPlayMusic() {
+      music.play().catch(() => {
+        playBtn.style.display = 'inline-block';
+      });
+    }
+
+    playBtn.onclick = () => {
+      music.play();
+      playBtn.style.display = 'none';
     };
 
-    // Initialiser Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // Référence à la valeur compteur dans la DB
-    const counterRef = ref(db, 'signatures/count');
-
-    // Afficher le compteur en live
-    onValue(counterRef, (snapshot) => {
-      const count = snapshot.val() || 0;
-      document.getElementById('counter').textContent = count + " signatures";
-    });
-
-    // Incrémenter le compteur de façon sûre
-    document.getElementById('signBtn').addEventListener('click', () => {
-      runTransaction(counterRef, (current) => {
-        return (current || 0) + 1;
-      });
-    });
+    tryPlayMusic();
   </script>
 </body>
 </html>
