@@ -38,7 +38,7 @@
     button {
       padding: 12px 24px;
       font-size: 1em;
-      background-color: #e53935; /* rouge /
+      background-color: #e53935; /* rouge */
       color: white;
       border: none;
       border-radius: 8px;
@@ -46,10 +46,10 @@
       margin: 10px;
     }
     button:hover {
-      background-color: #b71c1c; / rouge foncé /
+      background-color: #b71c1c; /* rouge foncé */
     }
 
-    / Styles cœur /
+    /* Styles cœur */
     .heart {
       position: fixed;
       width: 25px;
@@ -73,7 +73,7 @@
       }
     }
 
-    / Conteneur audio invisible */
+    /* Conteneur audio invisible */
     audio {
       display: none;
     }
@@ -86,7 +86,7 @@
     <div id="counter">0 signatures</div>
     <button onclick="signPetition()">Je signe ✍️</button>
     <br />
-    <button id="playMusicBtn" style="display:none;">▶️ C'est pour toi, Machin</button>
+    <button id="playMusicBtn">▶️ C'est pour toi, Machin</button>
   </div>
 
   <!-- Musique en fond -->
@@ -123,18 +123,10 @@
       yaySound.play();
     }
 
-    function tryPlayMusic() {
-      music.play().catch(() => {
-        playBtn.style.display = 'inline-block';
-      });
-    }
-
     playBtn.onclick = () => {
       music.play();
       playBtn.style.display = 'none';
     };
-
-    tryPlayMusic();
   </script>
 </body>
 </html>
