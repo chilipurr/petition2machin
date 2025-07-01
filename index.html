@@ -86,7 +86,7 @@
     <div id="counter">0 signatures</div>
     <button onclick="signPetition()">Je signe ✍️</button>
     <br />
-    <button id="playMusicBtn">▶️ C'est pour toi, Machin</button>
+    <button id="playMusicBtn" style="display:none;">▶️ C'est pour toi, Machin</button>
   </div>
 
   <!-- Musique en fond -->
@@ -123,10 +123,18 @@
       yaySound.play();
     }
 
+    function tryPlayMusic() {
+      music.play().catch(() => {
+        playBtn.style.display = 'inline-block';
+      });
+    }
+
     playBtn.onclick = () => {
       music.play();
       playBtn.style.display = 'none';
     };
+
+    tryPlayMusic();
   </script>
 </body>
 </html>
