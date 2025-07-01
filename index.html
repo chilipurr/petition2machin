@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Pétition pour sauver Machin</title>
+  <link rel="icon" href="vroom.png" type="image/png" />
   <style>
     body {
       margin: 0;
@@ -94,33 +95,14 @@
     Ton navigateur ne supporte pas la lecture audio.
   </audio>
 
-  <!-- Son yay local -->
-  <audio id="yaySound">
-    <source src="yay.mp3" type="audio/mpeg" />
-    Ton navigateur ne supporte pas la lecture audio.
-  </audio>
+  <!-- Son yay -->
+  <audio id="yaySound" src="yay.mp3"></audio>
 
   <script>
-    let counter = 0;
-
     const music = document.getElementById('backgroundMusic');
     const playBtn = document.getElementById('playMusicBtn');
-    const counterEl = document.getElementById('counter');
-    const yay = document.getElementById('yaySound');
+    const yaySound = document.getElementById('yaySound');
 
-    function updateCounter() {
-      counterEl.textContent = counter + (counter <= 1 ? " signature" : " signatures");
-    }
-
-    function signPetition() {
-      counter++;
-      updateCounter();
-      yay.currentTime = 0;
-      yay.play();
-      createHeart();
-    }
-
-    // Petits cœurs qui flottent doucement
     function createHeart() {
       const heart = document.createElement('div');
       heart.className = 'heart';
@@ -131,10 +113,18 @@
     }
     setInterval(createHeart, 700);
 
-    // Essayer de lancer la musique automatiquement
+    function signPetition() {
+      let counterElem = document.getElementById("counter");
+      let currentCount = parseInt(counterElem.textContent) || 0;
+      currentCount++;
+      counterElem.textContent = currentCount + " signatures";
+
+      yaySound.currentTime = 0; // reset son
+      yaySound.play();
+    }
+
     function tryPlayMusic() {
       music.play().catch(() => {
-        // Si auto-play bloqué, afficher le bouton play
         playBtn.style.display = 'inline-block';
       });
     }
@@ -144,7 +134,6 @@
       playBtn.style.display = 'none';
     };
 
-    updateCounter();
     tryPlayMusic();
   </script>
 </body>
