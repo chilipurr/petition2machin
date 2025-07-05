@@ -117,7 +117,7 @@
       let counterElem = document.getElementById("counter");
       let currentCount = parseInt(counterElem.textContent) || 0;
       currentCount++;
-      counterElem.textContent = currentCount + " signatures";
+      counterElem.textContent = currentCount + " signature" + (currentCount === 1 ? "" : "s");
 
       yaySound.currentTime = 0; // reset son
       yaySound.play();
