@@ -83,10 +83,10 @@
   <div class="container">
     <h1>✊ Sauvons Machin le cochon d'Inde qui avant s'appelait Tchoupi!</h1>
     <p>Chaque signature est une voix pour la dignité de Machin. Aidez-nous à lui offrir un avenir doux et plein de foin.</p>
-    <div id="counter">0 signatures</div>
+    <div id="counter">0 signature</div>
     <button onclick="signPetition()">Je signe ✍️</button>
     <br />
-    <button id="playMusicBtn" style="display:none;">▶️ C'est pour toi, Machin</button>
+    <button id="playMusicBtn">▶️ C'est pour toi, Machin</button>
   </div>
 
   <!-- Musique en fond -->
@@ -119,22 +119,14 @@
       currentCount++;
       counterElem.textContent = currentCount + " signature" + (currentCount >= 2 ? "s" : "");
 
-      yaySound.currentTime = 0; // reset son
+      yaySound.currentTime = 0;
       yaySound.play();
-    }
-
-    function tryPlayMusic() {
-      music.play().catch(() => {
-        playBtn.style.display = 'inline-block';
-      });
     }
 
     playBtn.onclick = () => {
       music.play();
       playBtn.style.display = 'none';
     };
-
-    tryPlayMusic();
   </script>
 </body>
 </html>
