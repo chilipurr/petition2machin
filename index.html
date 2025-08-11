@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pétition pour sauver Machin</title>
+  <link rel="icon" href="vroom.png" type="image/png" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('fond.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      text-align: center;
+      padding-top: 100px;
+      overflow-x: hidden;
+    }
+    .container {
+      background-color: rgba(0,0,0,0.6);
+      padding: 40px;
+      margin: auto;
+      border-radius: 12px;
+      max-width: 500px;
+      position: relative;
+      z-index: 10;
+    }
+    h1 {
+      font-size: 2em;
+    }
+    p {
+      font-size: 1.1em;
+    }
+    #counter {
+      font-size: 3em;
+      margin: 20px 0;
+    }
+    button {
+      padding: 12px 24px;
+      font-size: 1em;
+      background-color: #e53935; /* rouge */
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+    }
+    button:hover {
+      background-color: #b71c1c; /* rouge foncé */
+    }
+
+    /* Styles cœur */
+    .heart {
+      position: fixed;
+      width: 25px;
+      height: 25px;
+      background-image: url('heart.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: floatUp 4s linear forwards;
+      z-index: 9999;
+    }
+    @keyframes floatUp {
+      from {
+        transform: translateY(0);
+        opacity: 0.7;
+      }
+      to {
+        transform: translateY(-150px);
+        opacity: 0;
+      }
+    }
+
+    /* Conteneur audio invisible */
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✊ Sauvons Machin le cochon d'Inde qui avant s'appelait Tchoupi!</h1>
+    <p>Chaque signature est une voix pour la dignité de Machin. Aidez-nous à lui offrir un avenir doux et plein de foin.</p>
+    <div id="counter">0 signature</div>
+    <button onclick="signPetition()">Je signe ✍️</button>
+    <br />
+    <button id="playMusicBtn">▶️ C'est pour toi, Machin</button>
+  </div>
+
+  <!-- Musique en fond -->
+  <audio id="backgroundMusic" loop>
+    <source src="musique.mp3" type="audio/mpeg" />
+    Ton navigateur ne supporte pas la lecture audio.
+  </audio>
+
+  <!-- Son yay -->
+  <audio id="yaySound" src="yay.mp3"></audio>
+
+  <script>
+    const music = document.getElementById('backgroundMusic');
+    const playBtn = document.getElementById('playMusicBtn');
+    const yaySound = document.getElementById('yaySound');
+
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.top = window.innerHeight + 'px';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 4000);
+    }
+    setInterval(createHeart, 700);
+
+    async function signPetition() {
+      const counterElem = document.getElementById("counter");
+
+      try {
+        const response = await fetch('https://89813f2f5d22.ngrok-free.app/sign', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) throw new Error('Erreur lors de l’envoi de la signature.');
+
+        const data = await response.json();
+        const currentCount = data.count;
+
+        counterElem.textContent = currentCount + " signature" + (currentCount >= 2 ? "s" : "");
+
+        yaySound.currentTime = 0;
+        yaySound.play();
+
+      } catch (error) {
+        alert(error.message);
+      }
+    }
+
+    playBtn.onclick = () => {
+      music.play();
+      playBtn.style.display = 'none';
+    };
+  </script>
+</body>
+</html>
