@@ -102,6 +102,7 @@
     const music = document.getElementById('backgroundMusic');
     const playBtn = document.getElementById('playMusicBtn');
     const yaySound = document.getElementById('yaySound');
+    const counterElem = document.getElementById("counter");
 
     function createHeart() {
       const heart = document.createElement('div');
@@ -113,14 +114,33 @@
     }
     setInterval(createHeart, 700);
 
-    function signPetition() {
-      let counterElem = document.getElementById("counter");
-      let currentCount = parseInt(counterElem.textContent) || 0;
-      currentCount++;
-      counterElem.textContent = currentCount + " signature" + (currentCount >= 2 ? "s" : "");
+    // Charger le compteur initial depuis le serveur au chargement de la page
+    window.onload = () => {
+      fetch('http://192.168.1.122:5000/signature')
+        .then(response => response.json())
+        .then(data => {
+          const count = data.count || 0;
+          counterElem.textContent = count + " signature" + (count >= 2 ? "s" : "");
+        })
+        .catch(() => {
+          counterElem.textContent = "0 signature";
+        });
+    };
 
-      yaySound.currentTime = 0;
-      yaySound.play();
+    function signPetition() {
+      fetch('http://192.168.1.122:5000/signature', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        const count = data.count || 0;
+        counterElem.textContent = count + " signature" + (count >= 2 ? "s" : "");
+        yaySound.currentTime = 0;
+        yaySound.play();
+      })
+      .catch(() => {
+        alert("Erreur lors de l'envoi de la signature.");
+      });
     }
 
     playBtn.onclick = () => {
